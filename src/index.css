@@ -7,7 +7,80 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+.btn-custom {
+  border-radius: 5px;
+  background-color: #337ab7;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-color: #337ab7;
+}
+
+.btn-custom:hover{
+  background-color: #236aa7;
+  color: white;
+}
+
+
+.container {
+  margin-top: 5px;
+}
+
+.movieListEntry{
+  margin: 5px 0px;
+}
+
+.movieListImage{
+  width: 100%;
+  border-radius: 10px
+}
+
+.movieListTitle {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.searchControl{
+  margin-top: 5px;
+}
+
+.searchControlButton{
+  margin-top: 2px;
+}
+
+.wideButton{
+  width: 100%
+}
+
+
+.margin-top-10{
+  margin-top: 10px;
+}
+
+.margin-top-20{
+  margin-top: 20px;
+}
+
+.margin-top-40{
+  margin-top: 40px;
+}
+
+.margin-bottom-40{
+  margin-bottom: 40px;
+}
+
+.description{
+  text-align: left;
+}
+
+.title{
+  font-weight: bold;
+  color: #337ab7;
+  text-align: left;
+}
+
+.content{
+  text-align: left
 }

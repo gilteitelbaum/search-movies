@@ -1,0 +1,3 @@
+{
+    "endpointBase": "http://www.omdbapi.com?apikey=157f34ed&type=movie"
+}

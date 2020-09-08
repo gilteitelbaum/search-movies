@@ -4,10 +4,16 @@ import './App.css';
 import Movies from "./components/movies";
 import MovieDetails from "./components/movieDetails";
 import NotFound from "./components/notFound";
+import { ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   return (
     <div className="App">
+    <ToastContainer />
+      <header className="header">
+        <h1>OMDB-API Search Movies</h1>
+      </header>
       <main className="container">
         <Switch>
           <Route path="/movies/:id" component={MovieDetails}></Route>
