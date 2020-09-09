@@ -27,7 +27,7 @@ class Movies extends Component {
 
         if (movieSearchName.trim() === '')
             errors.movieSearchName = "Name of movie is required";
-        if (movieYear.trim().length > 0 && isNaN(parseInt(movieYear.trim()))) {
+        if (movieYear && movieYear.trim().length > 0 && isNaN(parseInt(movieYear.trim()))) {
             errors.movieYear = "Year is invalid";
         }
         return errors;
