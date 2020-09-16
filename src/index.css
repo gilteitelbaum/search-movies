@@ -34,8 +34,16 @@ body {
 
 .movieListImage{
   width: 100%;
-  border-radius: 10px
+  border-radius: 10px;
+  width: 200px;
+  height: 250px;
 }
+
+.largeMovieListImage{
+  width: 100%;
+  border-radius: 10px;
+}
+
 
 .movieListTitle {
   font-size: 18px;

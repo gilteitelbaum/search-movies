@@ -101,10 +101,10 @@ class Movies extends Component {
 
     render() {
         const { isLoading, movies, totalMovies, movieSearchName, movieYear } = this.state;
-        if (isLoading) return <p>Loading...</p>
 
         return (
             <>
+                {isLoading && <p>Loading...</p>}
                 <Form onSubmit={this.handleSubmit}>
                     <Row>
                         <Col className="searchControl" md={8} sm={6} xs={8}><Form.Control id="movieSearchName" onChange={this.handleChange} value={movieSearchName || ""} placeholder="Search for any movie" /></Col>

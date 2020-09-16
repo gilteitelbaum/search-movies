@@ -3,6 +3,7 @@ import restService from '../services/restService';
 import config from "../config.json";
 import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import TitleAndContent from "./titleAndContent";
 
 
 class MovieDetails extends Component {
@@ -32,38 +33,14 @@ class MovieDetails extends Component {
         this.performSearch();
     }
 
-    displayColumn(content) {
-        return (
-            <Col className="description">
-                {content}
-            </Col>
-        );
-    }
-
-    displayTitledData(title, content) {
-        return (
-            <>
-                <Row>
-                    <Col lg={3} md={4} xs={6} className="title">
-                        {title}
-                    </Col>
-                    <Col lg={9} md={8} xs={6} className="content">
-                        {content}
-                    </Col>
-                </Row>
-            </>
-        )
-    }
-
     displayTitledDataWithLine(title, content) {
         return (
             <>
                 <hr></hr>
-                {this.displayTitledData(title, content)}
+                <TitleAndContent title={title} content={content}></TitleAndContent>
             </>
         )
     }
-
 
     render() {
         const { movie, isLoading } = this.state;
@@ -73,39 +50,46 @@ class MovieDetails extends Component {
         if (isLoading) return (<h3>Loading Movie Details...</h3>);
         return (
             <>
+                {isLoading && <h3>Loading Movie Details...</h3>}
                 <h2>{movie.Title} {"(" + movie.Year + ")"}</h2>
                 <hr></hr>
                 <Row>
                     <Col className="margin-bottom-40" md={6} sm={12}>
-                        <img className="movieListImage" src={movie.Poster}></img>
+                        <img className="largeMovieListImage" src={movie.Poster}></img>
                     </Col>
                     <Col md={6} sm={12} >
                         <Row>
-                            {this.displayColumn(movie.Rated)}
-                            {this.displayColumn(movie.Runtime)}
-                            {this.displayColumn(movie.Genre)}
+                            <Col className="description">
+                                {movie.Rated}
+                            </Col>
+                            <Col className="description">
+                                {movie.Runtime}
+                            </Col>
+                            <Col className="description">
+                                {movie.Genre}
+                            </Col>
                         </Row>
                         <hr></hr>
                         <Row>
                             <Col className="description">
-                                {movie.Plot}}
+                                {movie.Plot}
                             </Col>
                         </Row>
                         {this.displayTitledDataWithLine("Writer:", movie.Writer)}
-                        {this.displayTitledData("Actors:", movie.Actors)}
-                        {this.displayTitledData("Director:", movie.Director)}
-                        {this.displayTitledData("Country:", movie.Country)}
+                        <TitleAndContent title="Actors:" content={movie.Actors}></TitleAndContent>
+                        <TitleAndContent title="Director:" content={movie.Director}></TitleAndContent>
+                        <TitleAndContent title="Country:" content={movie.Country}></TitleAndContent>
                         {this.displayTitledDataWithLine("Awards:", movie.Awards)}
-                        {this.displayTitledData("Metascore:", movie.Metascore)}
-                        {this.displayTitledData("Imdb Rating:", movie.imdbRating)}
-                        {this.displayTitledData("Imdb Votes:", movie.imdbVotes)}
+                        <TitleAndContent title="Metascore:" content={movie.Metascore}></TitleAndContent>
+                        <TitleAndContent title="Imdb Rating:" content={movie.imdbRating}></TitleAndContent>
+                        <TitleAndContent title="Imdb Votes:" content={movie.imdbVotes}></TitleAndContent>
                         {this.displayTitledDataWithLine("Box Office:", movie.BoxOffice)}
-                        {this.displayTitledData("Production:", movie.Production)}
+                        <TitleAndContent title="Production:" content={movie.Production}></TitleAndContent>
                     </Col>
                 </Row>
                 <hr></hr>
                 <Row>
-                <Link className="btn-custom wideButton" to="/movies">Back to Movies Search</Link>
+                    <Link className="btn-custom wideButton" to="/movies">Back to Movies Search</Link>
                 </Row>
             </>
         );
