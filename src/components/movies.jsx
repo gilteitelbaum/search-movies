@@ -1,9 +1,10 @@
-import React, { Component, useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import MoviesTable from "./moviesTable";
 import restService from '../services/restService';
 import config from "../config.json";
 import { Form, Row, Col } from "react-bootstrap";
 import { toast } from 'react-toastify';
+import { MovieContext } from "../movieContext";
 
 
 export default function Movies(props) {
@@ -14,7 +15,21 @@ export default function Movies(props) {
     const [movieSearchName, setMovieSearchName] = useState(null);
     const [movieYear, setMovieYear] = useState(null);
     const [lastPage, setLastPage] = useState(1);
-    const [errors, setErrors] = useState([]);
+
+    const [moviesSearch, setMoviesSearch] = useContext(MovieContext);
+
+    useEffect(() => {
+        if (moviesSearch && moviesSearch.movies && moviesSearch.movies.length > 0) {
+            setMovies(moviesSearch.movies);
+            setTotalMovies(moviesSearch.totalMovies);
+            setMovieSearchName(moviesSearch.movieSearchName);
+            setMovieYear(moviesSearch.movieYear);
+            setLastPage(moviesSearch.lastPage);
+            setIsLoading(false);
+            setDidSearch(true);
+        }
+    }, []);
+
 
     function validate() {
         const validationErrors = {};
@@ -31,7 +46,6 @@ export default function Movies(props) {
     const handleSubmit = event => {
         event.preventDefault();
         const validationErrors = validate();
-        setErrors(validationErrors);
         for (let key in validationErrors) {
             toast.error(validationErrors[key]);
             return; // return on first error
@@ -59,16 +73,19 @@ export default function Movies(props) {
         try {
             setIsLoading(true);
             const moviesRetrieved = await restService.get(getUrl(page));
-            if (page > 1) {
-                let holdMovies = movies.concat(moviesRetrieved.data.Search);
-                setMovies(holdMovies);
-            }
-            else
-                setMovies(moviesRetrieved.data.Search);
             setTotalMovies(moviesRetrieved.data.totalResults);
             setIsLoading(false);
             setDidSearch(true);
             setLastPage(page);
+            if (page > 1) {
+                let holdMovies = movies.concat(moviesRetrieved.data.Search);
+                setMovies(holdMovies);
+                console.log("holdMovies.length=" + holdMovies.length + " " + moviesSearch.movies.length);
+                setMoviesSearch({ movies: [...holdMovies], totalMovies: moviesRetrieved.data.totalResults, lastPage: page, movieSearchName: movieSearchName, movieYear: movieYear })
+            }
+            else
+                setMovies(moviesRetrieved.data.Search);
+            setMoviesSearch({ movies: moviesRetrieved.data.Search, totalMovies: moviesRetrieved.data.totalResults, lastPage: page, movieSearchName: movieSearchName, movieYear: movieYear })
         } catch (ex) {
             setIsLoading(false);
             if (ex.response && ex.response.status === 404) {
