@@ -5,7 +5,6 @@ import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TitleAndContent from "./titleAndContent";
 
-
 class MovieDetails extends Component {
     constructor(props) {
         super(props);
@@ -59,31 +58,23 @@ class MovieDetails extends Component {
                     </Col>
                     <Col md={6} sm={12} >
                         <Row>
-                            <Col className="description">
-                                {movie.Rated}
-                            </Col>
-                            <Col className="description">
-                                {movie.Runtime}
-                            </Col>
-                            <Col className="description">
-                                {movie.Genre}
-                            </Col>
+                            <Col className="description">{movie.Rated}</Col>
+                            <Col className="description">{movie.Runtime}</Col>
+                            <Col className="description">{movie.Genre}</Col>
                         </Row>
                         <hr></hr>
                         <Row>
-                            <Col className="description">
-                                {movie.Plot}
-                            </Col>
+                            <Col className="description">{movie.Plot}</Col>
                         </Row>
-                        {this.displayTitledDataWithLine("Writer:", movie.Writer)}
+                        <TitleAndContent displayLine="true" title="Writer:" content={movie.Writer}></TitleAndContent>
                         <TitleAndContent title="Actors:" content={movie.Actors}></TitleAndContent>
                         <TitleAndContent title="Director:" content={movie.Director}></TitleAndContent>
                         <TitleAndContent title="Country:" content={movie.Country}></TitleAndContent>
-                        {this.displayTitledDataWithLine("Awards:", movie.Awards)}
+                        <TitleAndContent displayLine="true" title="Awards:" content={movie.Awards}></TitleAndContent>
                         <TitleAndContent title="Metascore:" content={movie.Metascore}></TitleAndContent>
                         <TitleAndContent title="Imdb Rating:" content={movie.imdbRating}></TitleAndContent>
                         <TitleAndContent title="Imdb Votes:" content={movie.imdbVotes}></TitleAndContent>
-                        {this.displayTitledDataWithLine("Box Office:", movie.BoxOffice)}
+                        <TitleAndContent displayLine="true" title="Box Office:" content={movie.BoxOffice}></TitleAndContent>
                         <TitleAndContent title="Production:" content={movie.Production}></TitleAndContent>
                     </Col>
                 </Row>
@@ -94,8 +85,6 @@ class MovieDetails extends Component {
             </>
         );
     }
-
 }
 
 export default MovieDetails;
-

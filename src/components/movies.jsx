@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import MoviesTable from "./moviesTable";
 import restService from '../services/restService';
 import config from "../config.json";
@@ -6,89 +6,86 @@ import { Form, Row, Col } from "react-bootstrap";
 import { toast } from 'react-toastify';
 
 
-class Movies extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            movies: [],
-            totalMovies: 0,
-            isLoading: false,
-            didSearch: false,
-            movieSearchName: null,
-            movieYear: null,
-            lastPage: 1,
-            errors: {}
-        }
-    }
+export default function Movies(props) {
+    const [movies, setMovies] = useState([]);
+    const [totalMovies, setTotalMovies] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const [didSearch, setDidSearch] = useState(false);
+    const [movieSearchName, setMovieSearchName] = useState(null);
+    const [movieYear, setMovieYear] = useState(null);
+    const [lastPage, setLastPage] = useState(1);
+    const [errors, setErrors] = useState([]);
 
-    validate() {
-        const errors = {};
-        const { movieSearchName, movieYear } = this.state;
+    function validate() {
+        const validationErrors = {};
 
-        if (movieSearchName.trim() === '')
-            errors.movieSearchName = "Name of movie is required";
+        if (!movieSearchName || movieSearchName.trim() === '')
+            validationErrors.movieSearchName = "Name of movie is required";
         if (movieYear && movieYear.trim().length > 0 && isNaN(parseInt(movieYear.trim()))) {
-            errors.movieYear = "Year is invalid";
+            validationErrors.movieYear = "Year is invalid";
         }
-        return errors;
+
+        return validationErrors;
     }
 
-    handleSubmit = event => {
+    const handleSubmit = event => {
         event.preventDefault();
-        const errors = this.validate();
-        this.setState({ errors });
-        for (let key in errors) {
-            toast.error(errors[key]);
+        const validationErrors = validate();
+        setErrors(validationErrors);
+        for (let key in validationErrors) {
+            toast.error(validationErrors[key]);
             return; // return on first error
         }
 
-        if (this.state.movieSearchName) {
-            this.performSearch(1)
+        if (movieSearchName) {
+            performSearch(1)
         }
     }
 
-    getMoreMovies = event => {
-        this.performSearch(this.state.lastPage + 1);
+    const getMoreMovies = event => {
+        performSearch(lastPage + 1);
     }
 
-    getUrl(page) {
-        let url = config.endpointBase + '&s=' + this.state.movieSearchName;
-        if (this.state.movieYear)
-            url += "&y=" + this.state.movieYear;
+    function getUrl(page) {
+        let url = config.endpointBase + '&s=' + movieSearchName;
+        if (movieYear)
+            url += "&y=" + movieYear;
         if (page > 1)
             url += "&page=" + page;
         return url;
     }
 
-
-    async performSearch(page) {
+    async function performSearch(page) {
         try {
-            this.setState({ isLoading: true });
-            const moviesRetrieved = await restService.get(this.getUrl(page));
-            if (page > 1)
-                this.setState({ movies: this.state.movies.concat(moviesRetrieved.data.Search), totalMovies: moviesRetrieved.data.totalResults });
+            setIsLoading(true);
+            const moviesRetrieved = await restService.get(getUrl(page));
+            if (page > 1) {
+                let holdMovies = movies.concat(moviesRetrieved.data.Search);
+                setMovies(holdMovies);
+            }
             else
-                this.setState({ movies: moviesRetrieved.data.Search, totalMovies: moviesRetrieved.data.totalResults });
-            this.setState({ isLoading: false, lastPage: page, didSearch: true });
+                setMovies(moviesRetrieved.data.Search);
+            setTotalMovies(moviesRetrieved.data.totalResults);
+            setIsLoading(false);
+            setDidSearch(true);
+            setLastPage(page);
         } catch (ex) {
-            this.setState({ isLoading: false });
+            setIsLoading(false);
             if (ex.response && ex.response.status === 404) {
                 alert("not found")
             }
         }
     }
 
-    handleChange = event => {
-        const { id, value } = event.target;
-        this.setState(prevState => ({
-            ...prevState,
-            [id]: value
-        }));
+    const handleTitleChange = event => {
+        setMovieSearchName(event.target.value);
     }
 
-    showMovies() {
-        const { totalMovies, movies } = this.state;
+    const handleYearChange = event => {
+        setMovieYear(event.target.value);
+    }
 
+    function showMovies() {
         return (
             <div className="row margin-top-40">
                 <div className="col">
@@ -99,24 +96,18 @@ class Movies extends Component {
         );
     }
 
-    render() {
-        const { isLoading, movies, totalMovies, movieSearchName, movieYear } = this.state;
-
-        return (
-            <>
-                {isLoading && <p>Loading...</p>}
-                <Form onSubmit={this.handleSubmit}>
-                    <Row>
-                        <Col className="searchControl" md={8} sm={6} xs={8}><Form.Control id="movieSearchName" onChange={this.handleChange} value={movieSearchName || ""} placeholder="Search for any movie" /></Col>
-                        <Col className="searchControl" md={2} sm={3} xs={4}><Form.Control id="movieYear" onChange={this.handleChange} value={movieYear || ""} placeholder="Year" /></Col>
-                        <Col className="searchControlButton" md={2} sm={3} xs={12}><button disabled={isLoading || !(movieSearchName && movieSearchName.length)} className=" btn-custom wideButton" type="submit">Search</button></Col>
-                    </Row>
-                </Form >
-                {this.state.didSearch ? this.showMovies() : null}
-                {movies && movies.length > 0 && movies.length < totalMovies ? <button className="btn-custom margin-top-10" onClick={this.getMoreMovies}>Show More Movies</button> : null}
-            </>
-        );
-    }
+    return (
+        <>
+            {isLoading && <p>Loading...</p>}
+            <Form onSubmit={handleSubmit}>
+                <Row>
+                    <Col className="searchControl" md={8} sm={6} xs={8}><Form.Control id="movieSearchName" onChange={handleTitleChange} value={movieSearchName || ""} placeholder="Search for any movie" /></Col>
+                    <Col className="searchControl" md={2} sm={3} xs={4}><Form.Control id="movieYear" onChange={handleYearChange} value={movieYear || ""} placeholder="Year" /></Col>
+                    <Col className="searchControlButton" md={2} sm={3} xs={12}><button disabled={isLoading || !(movieSearchName && movieSearchName.length)} className=" btn-custom wideButton" type="submit">Search</button></Col>
+                </Row>
+            </Form >
+            {didSearch ? showMovies() : null}
+            {movies && movies.length > 0 && movies.length < totalMovies ? <button className="btn-custom margin-top-10" onClick={getMoreMovies}>Show More Movies</button> : null}
+        </>
+    );
 }
-
-export default Movies;
