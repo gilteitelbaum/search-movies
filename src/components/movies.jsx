@@ -80,16 +80,16 @@ export default function Movies(props) {
             if (page > 1) {
                 let holdMovies = movies.concat(moviesRetrieved.data.Search);
                 setMovies(holdMovies);
-                console.log("holdMovies.length=" + holdMovies.length + " " + moviesSearch.movies.length);
-                setMoviesSearch({ movies: [...holdMovies], totalMovies: moviesRetrieved.data.totalResults, lastPage: page, movieSearchName: movieSearchName, movieYear: movieYear })
+                setMoviesSearch(previousMovies => ({ ...previousMovies, movies: [...holdMovies], lastPage: page }));
             }
-            else
+            else {
                 setMovies(moviesRetrieved.data.Search);
-            setMoviesSearch({ movies: moviesRetrieved.data.Search, totalMovies: moviesRetrieved.data.totalResults, lastPage: page, movieSearchName: movieSearchName, movieYear: movieYear })
+                setMoviesSearch({ movies: moviesRetrieved.data.Search, totalMovies: moviesRetrieved.data.totalResults, lastPage: page, movieSearchName: movieSearchName, movieYear: movieYear })
+            }
         } catch (ex) {
             setIsLoading(false);
             if (ex.response && ex.response.status === 404) {
-                alert("not found")
+                alert("not found");
             }
         }
     }
